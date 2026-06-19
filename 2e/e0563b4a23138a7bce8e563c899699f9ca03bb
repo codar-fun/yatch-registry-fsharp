@@ -1,0 +1,55 @@
+src/Program.fs
+  s_4bd0048c2b5d3e::t_0a71d41c0133e3 5
+  s_4bd0048c2b5d3e::t_6960de48e285f6 1-4,6-46
+src/Db.fs
+  s_4bd0048c2b5d3e::t_65b8f6bd7e08d2 1-274
+README.md
+  s_4bd0048c2b5d3e::t_5eee28c80eab3b 1-64
+Dockerfile
+  s_4bd0048c2b5d3e::t_2ae20b02b111dd 1-21
+src/Yatch.fsproj
+  s_4bd0048c2b5d3e::t_379302a34d3211 1-30
+src/Handlers.fs
+  s_4bd0048c2b5d3e::t_0bcbacd7482f09 1-433,435-459
+  s_4bd0048c2b5d3e::t_37f3be59b8ed31 434
+src/Config.fs
+  s_4bd0048c2b5d3e::t_892bdde9fc1078 1-51
+src/Oci.fs
+  s_4bd0048c2b5d3e::t_3e89faef99e39a 6-7,15-60,84,86,88-92,94-102
+  s_4bd0048c2b5d3e::t_e9ca8dc7f3343c 1-5,8-14,61-83,85,87,93
+.gitignore
+  s_4bd0048c2b5d3e::t_06a48d6f8c58bd 1-7
+src/Progress.fs
+  s_4bd0048c2b5d3e::t_be275df21373ab 1-64
+src/Storage.fs
+  s_4bd0048c2b5d3e::t_4a74847139887c 161
+  s_4bd0048c2b5d3e::t_b189265d0724a0 43-45,48-55
+  s_4bd0048c2b5d3e::t_d4c2b274950f62 183
+  s_4bd0048c2b5d3e::t_8556aafd906a8b 1-42,46-47,56-62,64-70,72-82,84-89,91-96,98-118,120-138,140-160,162-175,177-182,184-260
+  s_4bd0048c2b5d3e::t_fca8cefd781486 97
+  s_4bd0048c2b5d3e::t_c1b1d9e8b2947f 90
+  s_4bd0048c2b5d3e::t_19c75abbfcebb7 119
+  s_4bd0048c2b5d3e::t_fdcc6c6c3e05dc 139
+  s_4bd0048c2b5d3e::t_0bdbbd72bb932e 71
+  s_4bd0048c2b5d3e::t_3a6328783a932c 63
+  s_4bd0048c2b5d3e::t_a985ec4fec5b8c 83
+  s_4bd0048c2b5d3e::t_2568f8bf331ffe 176
+src/Auth.fs
+  s_4bd0048c2b5d3e::t_32068eaaf13e8d 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "2ee0563b4a23138a7bce8e563c899699f9ca03bb",
+  "prompts": {},
+  "sessions": {
+    "s_4bd0048c2b5d3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8a84e196-c875-4e0b-89e9-200eaf8c2659",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "jiangplus <jiang.plus.times@gmail.com>"
+    }
+  }
+}
