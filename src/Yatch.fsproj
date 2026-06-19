@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>yatch</AssemblyName>
+    <RootNamespace>Yatch</RootNamespace>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+
+  <!-- Compilation order matters in F# -->
+  <ItemGroup>
+    <Compile Include="Config.fs" />
+    <Compile Include="Oci.fs" />
+    <Compile Include="Progress.fs" />
+    <Compile Include="Db.fs" />
+    <Compile Include="Storage.fs" />
+    <Compile Include="Auth.fs" />
+    <Compile Include="Handlers.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.412.7" />
+    <PackageReference Include="Npgsql" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
