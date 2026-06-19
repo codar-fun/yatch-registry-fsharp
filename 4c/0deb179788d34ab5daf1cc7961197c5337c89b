@@ -1,0 +1,25 @@
+src/Yatch.fsproj
+  s_4bd0048c2b5d3e::t_a2512fd9249e82 7-10,12-14
+Dockerfile
+  s_4bd0048c2b5d3e::t_1fbddb93c05e3e 22
+  s_4bd0048c2b5d3e::t_2009bfff18cb01 11-12
+  s_4bd0048c2b5d3e::t_0e84dcb3265acb 7-9,14-17,20-21
+.dockerignore
+  s_4bd0048c2b5d3e::t_46e8b2b8f10545 1-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "4c0deb179788d34ab5daf1cc7961197c5337c89b",
+  "prompts": {},
+  "sessions": {
+    "s_4bd0048c2b5d3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8a84e196-c875-4e0b-89e9-200eaf8c2659",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "jiangplus <jiang.plus.times@gmail.com>"
+    }
+  }
+}
