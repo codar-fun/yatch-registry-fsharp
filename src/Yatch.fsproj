@@ -4,8 +4,14 @@
     <TargetFramework>net10.0</TargetFramework>
     <AssemblyName>yatch</AssemblyName>
     <RootNamespace>Yatch</RootNamespace>
-    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <!-- Single low-concurrency instance: Workstation GC keeps the heap small
+         (Server GC reserves a per-core heap segment, inflating RSS). -->
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <!-- Drop debug symbols from the publish output; trims the app layer. -->
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
     <WarningLevel>3</WarningLevel>
   </PropertyGroup>
 

@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+.git/
+*.db
+*.db-*
+*.tar
+.DS_Store

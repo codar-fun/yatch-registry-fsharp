@@ -4,12 +4,22 @@ WORKDIR /src
 COPY src/Yatch.fsproj src/
 RUN dotnet restore src/Yatch.fsproj
 COPY src/ src/
+# Framework-dependent publish (the chiseled aspnet base supplies the runtime).
+# Trimming/self-contained is deliberately avoided: AWS SDK + Npgsql + FSharp.Core
+# are reflection-heavy and not trim/AOT-safe — see the build notes.
 RUN dotnet publish src/Yatch.fsproj -c Release -o /app --no-restore
+# Pre-create an empty data dir to COPY into the shell-less chiseled stage.
+RUN mkdir -p /seed-data
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
+# Chiseled = distroless (no shell/pkg manager), runs as non-root (UID 1654),
+# no ICU (we set InvariantGlobalization). Far smaller + smaller attack surface
+# than the full Debian aspnet base.
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled
 WORKDIR /app
 COPY --from=build /app ./
-RUN mkdir -p /data
+# SQLite fallback path; in production DATABASE_URL points at Postgres so this is
+# unused, but keep it writable by the non-root user just in case.
+COPY --from=build --chown=$APP_UID:$APP_UID /seed-data /data
 ENV DB_PATH=/data/yatch.db
 ENV HOST=0.0.0.0
 ENV PORT=5000
