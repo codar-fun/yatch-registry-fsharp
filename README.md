@@ -28,7 +28,13 @@ Postgres database and OSS bucket as a drop-in replacement.
 - **Realtime progress API**: `GET /_progress` returns bytes, total, percent, and
   average + recent transfer speed for every in-flight upload.
 - **Auth**: optional static token via `Authorization: Bearer <token>` or HTTP
-  Basic (password == token), so stock `docker login` works.
+  Basic (password == token). When `AUTH_TOKEN` is set, the whole registry API
+  (`/v2/*`) and `/_progress` require auth — so `docker login` actually validates
+  credentials (returns `401 WWW-Authenticate: Basic` until correct).
+- **Operational**: unauthenticated `GET /healthz` for liveness/health checks
+  (use this, not `/v2/`, for Nomad/Traefik checks when auth is on); per-request
+  and startup logging (gated by `LOG_LEVEL`); all unhandled errors return a clean
+  OCI `INTERNAL_ERROR` JSON instead of leaking a stack trace.
 
 ## Configuration (environment variables)
 

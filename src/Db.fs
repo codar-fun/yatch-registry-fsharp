@@ -87,6 +87,12 @@ let private execNonQuery (db: Db) (sql: string) (ps: (string * obj) list) : Task
 
 let migrate (db: Db) : Task<unit> =
     task {
+        // WAL is persistent (database-level) and improves read/write concurrency
+        // for the standalone SQLite path.
+        match db with
+        | Sqlite _ -> do! execNonQuery db "PRAGMA journal_mode=WAL" []
+        | Postgres _ -> ()
+
         do!
             execNonQuery
                 db

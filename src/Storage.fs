@@ -82,7 +82,7 @@ type S3Store(cfg: Config) =
             try
                 let! resp = withTimeout 30.0 (fun ct -> client.GetObjectMetadataAsync(GetObjectMetadataRequest(BucketName = bucket, Key = key), ct))
                 return Some resp.ContentLength
-            with :? AmazonS3Exception as ex when ex.StatusCode = Net.HttpStatusCode.NotFound || ex.StatusCode = Net.HttpStatusCode.Forbidden -> return None
+            with :? AmazonS3Exception as ex when ex.StatusCode = Net.HttpStatusCode.NotFound -> return None
         }
 
     member _.Delete(key: string) : Task<unit> =

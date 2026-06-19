@@ -1,6 +1,7 @@
 module Yatch.Handlers
 
 open System
+open System.Diagnostics
 open System.IO
 open System.Text.Json
 open System.Threading.Tasks
@@ -155,15 +156,19 @@ let private putManifest (st: AppState) (ctx: HttpContext) (repo: string) (refere
         let! body = readAllBytes ctx.Request.Body
         let ct = header ctx "Content-Type" |> Option.defaultValue "application/vnd.docker.distribution.manifest.v2+json"
         let digest = Oci.computeDigest body
-        let key = Oci.manifestKey repo digest
-        do! st.S3.Put(key, body, ct)
-        do! Db.putManifest st.Db repo digest ct (int64 body.Length)
-        if not (reference.StartsWith "sha256:") then
-            do! Db.putTag st.Db repo reference digest
-        ctx.Response.StatusCode <- 201
-        hdr ctx "Docker-Content-Digest" digest
-        hdr ctx "Location" (sprintf "/v2/%s/manifests/%s" repo digest)
-        return ()
+        // When pushed by digest, the content must match the claimed digest.
+        if reference.StartsWith "sha256:" && reference <> digest then
+            return! ociErr ctx 400 Oci.digestInvalid
+        else
+            let key = Oci.manifestKey repo digest
+            do! st.S3.Put(key, body, ct)
+            do! Db.putManifest st.Db repo digest ct (int64 body.Length)
+            if not (reference.StartsWith "sha256:") then
+                do! Db.putTag st.Db repo reference digest
+            ctx.Response.StatusCode <- 201
+            hdr ctx "Docker-Content-Digest" digest
+            hdr ctx "Location" (sprintf "/v2/%s/manifests/%s" repo digest)
+            return ()
     }
 
 let private deleteManifest (st: AppState) (ctx: HttpContext) (repo: string) (reference: string) : Task =
@@ -442,18 +447,47 @@ let private dispatch (st: AppState) (ctx: HttpContext) (path: string) : Task =
     | Some(Oci.TagsList name) -> if m = "GET" then listTags st ctx name else methodNotAllowed ctx
     | None -> notFound ctx "path not found"
 
-/// Single entry point routed from a terminal middleware.
-let handle (st: AppState) (ctx: HttpContext) : Task =
-    let path = ctx.Request.Path.Value
-    let m = ctx.Request.Method
+let private logLine (st: AppState) (m: string) (path: string) (status: int) (ms: int64) =
+    match st.Cfg.LogLevel.ToLowerInvariant() with
+    | "error" | "warn" | "warning" -> ()
+    | _ -> printfn "%s %s -> %d (%dms)" m path status ms
 
-    if path = "/_progress" && m = "GET" then progress st ctx
-    elif (path = "/v2/" || path = "/v2") && m = "GET" then versionCheck ctx
-    elif path = "/v2/_catalog" && m = "GET" then catalog st ctx
+/// Route one request. The whole registry API (`/v2/*`) and `/_progress` sit
+/// behind auth (so `docker login` validates credentials); `/healthz` is
+/// unauthenticated for liveness/health checks.
+let private routeRequest (st: AppState) (ctx: HttpContext) (path: string) (m: string) : Task =
+    let isRegistry = path = "/v2" || path.StartsWith "/v2/" || path = "/_progress"
+    if path = "/healthz" then
+        ctx.Response.StatusCode <- 200
+        ctx.Response.WriteAsync "ok"
+    elif isRegistry && st.Cfg.AuthToken.IsSome && not (Auth.check st.Cfg (header ctx "Authorization")) then
+        authChallenge ctx
+    elif path = "/_progress" && m = "GET" then
+        progress st ctx
+    elif (path = "/v2/" || path = "/v2") && m = "GET" then
+        versionCheck ctx
+    elif path = "/v2/_catalog" && m = "GET" then
+        catalog st ctx
     elif path.StartsWith "/v2/" then
-        if st.Cfg.AuthToken.IsSome && not (Auth.check st.Cfg (header ctx "Authorization")) then
-            authChallenge ctx
-        else
-            dispatch st ctx (path.Substring "/v2/".Length)
+        dispatch st ctx (path.Substring "/v2/".Length)
     else
         notFound ctx "not found"
+
+/// Single entry point from the terminal middleware: routes, catches any
+/// unhandled error into a clean OCI 500, and logs the request.
+let handle (st: AppState) (ctx: HttpContext) : Task =
+    task {
+        let sw = Stopwatch.StartNew()
+        let path =
+            match ctx.Request.Path.Value with
+            | null -> ""
+            | p -> p
+        let m = ctx.Request.Method
+        try
+            do! routeRequest st ctx path m
+        with ex ->
+            eprintfn "yatch ERROR %s %s: %s" m path (ex.ToString())
+            if not ctx.Response.HasStarted then
+                do! internalErr ctx "internal error"
+        logLine st m path ctx.Response.StatusCode sw.ElapsedMilliseconds
+    }

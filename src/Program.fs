@@ -41,6 +41,13 @@ let main argv =
     // Single terminal middleware dispatches every request (OCI + /_progress).
     app.Run(fun ctx -> handle state ctx)
 
-    printfn "Yatch (F#) registry listening on %s:%d" cfg.Host cfg.Port
+    let backend =
+        match db with
+        | Db.Postgres _ -> "postgres"
+        | Db.Sqlite _ -> sprintf "sqlite(%s)" cfg.DbPath
+    printfn "Yatch (F#) registry on %s:%d | metadata=%s | bucket=%s | endpoint=%s | auth=%b"
+        cfg.Host cfg.Port backend cfg.S3Bucket
+        (cfg.S3Endpoint |> Option.defaultValue "(default)")
+        cfg.AuthToken.IsSome
     app.Run()
     0
