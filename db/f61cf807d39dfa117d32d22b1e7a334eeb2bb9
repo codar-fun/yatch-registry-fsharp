@@ -1,0 +1,30 @@
+src/Storage.fs
+  s_4bd0048c2b5d3e::t_d62cfe055cfb25 85
+src/Handlers.fs
+  s_4bd0048c2b5d3e::t_aea9837f311504 4
+  s_4bd0048c2b5d3e::t_eb44e4415d4f33 450-453,478-486,488-493
+  s_4bd0048c2b5d3e::t_baec0157ef5e33 159-171
+  s_4bd0048c2b5d3e::t_945b6361c0b888 455-470,472,475-477,487
+README.md
+  s_4bd0048c2b5d3e::t_ca07a4994174f7 31-37
+src/Db.fs
+  s_4bd0048c2b5d3e::t_97e3761547e4c6 90-95
+src/Program.fs
+  s_4bd0048c2b5d3e::t_2f062f173e6fe1 44-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "dbf61cf807d39dfa117d32d22b1e7a334eeb2bb9",
+  "prompts": {},
+  "sessions": {
+    "s_4bd0048c2b5d3e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8a84e196-c875-4e0b-89e9-200eaf8c2659",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "jiangplus <jiang.plus.times@gmail.com>"
+    }
+  }
+}
